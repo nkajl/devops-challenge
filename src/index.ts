@@ -27,6 +27,18 @@ app.get('/deals', async (req: Request, res: Response) => {
 });
 
 
+app.post('/deals', async (req: Request, res: Response) => {
+  try {
+    const response = await axios.post(PIPEDRIVE_API_URL, req.body, {
+      params: {api_token: API_TOKEN}
+    });
+    res.json(response.status)
+  } catch(error: any) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
