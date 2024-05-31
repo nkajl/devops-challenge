@@ -36,7 +36,19 @@ app.post('/deals', async (req: Request, res: Response) => {
   } catch(error: any) {
     res.status(500).json({ error: error.message });
   }
-})
+});
+
+app.put('/deals/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const response = await axios.put(`${PIPEDRIVE_API_URL}/${id}`, req.body, {
+      params: { api_token: API_TOKEN }
+    });
+    res.json(response.data);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 
