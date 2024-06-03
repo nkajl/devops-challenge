@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import axios from "axios";
 import logger from "./logger";
+import { registry, httpRequestCounter, httpRequestTimer } from './metrics';
 
 dotenv.config();
 
@@ -12,13 +13,13 @@ const API_TOKEN = process.env.API_TOKEN;
 
 app.use(express.json());
 
-// const logger = winston.createLogger({
-//   level: 'info',
-//   format: winston.format.json(),
-//   transports: [
-//     new winston.transports.Console()
-//   ]
-// });
+app.use((req, res, next) => {
+  const end = httpRequestTimer.startTimer();
+  res.on('finish', () => {
+    end({ method: req.method, path: req.path, status: res.statusCode });
+  });
+  next();
+});
 
 app.get('/deals', async (req: Request, res: Response) => {
   try {
@@ -30,6 +31,8 @@ app.get('/deals', async (req: Request, res: Response) => {
   } catch (error: any) {
     logger.error('Error in GET /deals', { error: error.message });
     res.status(500).json({ error: error.message });
+  } finally {
+    httpRequestCounter.labels(req.method, req.path, res.statusCode.toString()).inc()
   }
 });
 
@@ -40,10 +43,12 @@ app.post('/deals', async (req: Request, res: Response) => {
       params: {api_token: API_TOKEN}
     });
     logger.info('POST /deals', {body: req.body});
-    res.json(response.status)
+    res.json(response.data);
   } catch(error: any) {
     logger.error('Error in POST /deals', { error: error.message });
     res.status(500).json({ error: error.message });
+  } finally {
+    httpRequestCounter.labels(req.method, req.path, res.statusCode.toString()).inc()
   }
 });
 
@@ -56,12 +61,17 @@ app.put('/deals/:id', async (req: Request, res: Response) => {
     logger.info('PUT /deals', {body: req.body});
     res.json(response.data);
   } catch (error: any) {
-    logger.error('Error in POST /deals', { error: error.message });
+    logger.error('Error in PUT /deals', { error: error.message });
     res.status(500).json({ error: error.message });
+  } finally {
+    httpRequestCounter.labels(req.method, req.path, res.statusCode.toString()).inc()
   }
 });
 
-
+app.get('/metrics', async (req: Request, res: Response) => {
+  res.setHeader('Content-Type', registry.contentType)
+  res.send(await registry.metrics())
+})
 
 app.listen(PORT, () => {
   logger.info(`Server is running on http://localhost:${PORT}`);
