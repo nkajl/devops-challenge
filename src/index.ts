@@ -28,9 +28,13 @@ app.get('/deals', async (req: Request, res: Response) => {
     });
     logger.info('GET /deals');
     res.json(response.data);
-  } catch (error: any) {
-    logger.error('Error in GET /deals', { error: error.message });
-    res.status(500).json({ error: error.message });
+  } catch (error) {
+    if(axios.isAxiosError(error)){
+      logger.error('Error in GET /deals', { error: error.response?.data });  
+    } else {
+      logger.error('Error in GET /deals', { error: error });
+    }
+    res.status(500).json({ error: (error as Error).message });
   } finally {
     httpRequestCounter.labels(req.method, req.path, res.statusCode.toString()).inc()
   }
@@ -44,9 +48,13 @@ app.post('/deals', async (req: Request, res: Response) => {
     });
     logger.info('POST /deals', {body: req.body});
     res.json(response.data);
-  } catch(error: any) {
-    logger.error('Error in POST /deals', { error: error.message });
-    res.status(500).json({ error: error.message });
+  } catch (error) {
+    if(axios.isAxiosError(error)){
+      logger.error('Error in POST /deals', { error: error.response?.data });  
+    } else {
+      logger.error('Error in POST /deals', { error: error });
+    }
+    res.status(500).json({ error: (error as Error).message });
   } finally {
     httpRequestCounter.labels(req.method, req.path, res.statusCode.toString()).inc()
   }
@@ -60,9 +68,13 @@ app.put('/deals/:id', async (req: Request, res: Response) => {
     });
     logger.info('PUT /deals', {body: req.body});
     res.json(response.data);
-  } catch (error: any) {
-    logger.error('Error in PUT /deals', { error: error.message });
-    res.status(500).json({ error: error.message });
+  } catch (error) {
+    if(axios.isAxiosError(error)){
+      logger.error('Error in PUT /deals', { error: error.response?.data });  
+    } else {
+      logger.error('Error in PUT /deals', { error: error });
+    }
+    res.status(500).json({ error: (error as Error).message });
   } finally {
     httpRequestCounter.labels(req.method, req.path, res.statusCode.toString()).inc()
   }
