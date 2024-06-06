@@ -22,6 +22,8 @@ services:
     image: grafana/grafana:latest
     volumes:
       - ./datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ./dashboards/:/etc/grafana/provisioning/dashboards/
     ports:
       - "3001:3000"
     environment:
