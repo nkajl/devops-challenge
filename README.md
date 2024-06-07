@@ -46,7 +46,7 @@ This command will build the Docker images and start the containers defined in th
 
 + **PUT /deals/:id**: Updates an already existing deal.
 
-+ **GET /metrics**: Returns request metrics.
++ **GET 8080/metrics**: Returns request metrics.
 
 ## Running Typescript Application within Dockerfile
 
