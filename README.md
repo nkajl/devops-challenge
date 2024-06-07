@@ -80,6 +80,8 @@ This command will build the Docker images and start the containers defined in th
 
 The logs include timestamp, log level, message, and additional data when applicable.
 
+<img src=terminal.png>
+
 ## Metrics Collection
 
 The application uses the `prom-client` library to expose metrics at the `/metrics` endpoint. Prometheus is configured to scrape these metrics at regular intervals. Grafana is then used for visualizing the collected metrics.
@@ -88,9 +90,13 @@ The application uses the `prom-client` library to expose metrics at the `/metric
 
 The `prometheus.yml` file contains the configuration for Prometheus to scrape metrics from a specified port where the /metrics endpoint is located.
 
+<img src=prometheus.png>
+
 ## Grafana Configuration
 
 The Grafana program is configured to automatically download the dashboard from a JSON file, the path to which is specified in the dashboard.yml file. Due to Docker Compose volumes, the saved dashboard can be retrieved from the Docker environment. This setup ensures that the same dashboard configuration is available across different environments, making it easy to set up and repeat.
+
+<img src=grafana.png>
 
 ## Continuous Integration (CI)
 
