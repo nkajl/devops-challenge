@@ -27,5 +27,9 @@ jobs:
     - name: Run Lint
       run: npm run lint
       
-    - name: Run Tests
-      run: npm test
+    - name: Run Tests with API_TOKEN
+      env:
+        API_TOKEN: ${{ secrets.API_TOKEN }}
+      run: |
+        export API_TOKEN=$API_TOKEN
+        npm test
