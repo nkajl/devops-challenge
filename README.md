@@ -1,16 +1,10 @@
 # Project overview
 
-This project is a simple TypeScript application built to interact with the public Pipedrive API. It provides three endpoints that forward requests to the Pipedrive API endpoints for dealing with deals. The application logs every action to the console and includes a /metrics endpoint that returns request metrics such as total request response time, last request response time and total requests count for all endpoints. Additionally, these metrics are scraped by Prometheus, which then forwards the data to Grafana, where the metrics are automatically visualized in the form of graphs.
+This TypeScript application interacts with the public Pipedrive API, offering endpoints for dealing with deals. It logs every action to the console and provides a /metrics endpoint for tracking request metrics, which are then visualized using Prometheus and Grafana.
 
 ## Running the Application locally
 
-Before running this project, make sure you have the following installed on your machine:
-
-+ **Docker**
-
-+ **Docker Compose**
-
-To run the Application, follow these steps:
+To run the application locally, ensure you have Docker and Docker Compose installed. Then follow these steps:
 
 1. Clone the repository:
 
@@ -48,7 +42,27 @@ This command will build the Docker images and start the containers defined in th
 
 + **GET 8080/metrics**: Returns request metrics.
 
-## Running Typescript Application within Dockerfile
+# Continuous Integration (CI)
+
+A CI pipeline is set up using GitHub Actions to ensure code integrity. It triggers on every commit to a pull request, running tests and linting processes.
+
+## Testing process
+
+The CI pipeline conducts unit tests to validate the behavior of individual API endpoints. Tests cover various scenarios, including successful responses, error handling, and interactions with external APIs, ensuring the application's integrity and reliability.
+
+## Linting process
+
+Linting is an automated code quality check that identifies potential errors, stylistic inconsistencies, and code smells in the codebase. The CI pipeline includes a linting process to enforce coding standards and maintain code readability.
+
+## API Token in Github Actions
+
+To securely authenticate API requests during testing, an API token is stored as a secret in GitHub Actions. This token is retrieved from environment variables during workflow execution and used to authorize requests to external APIs or services.
+
+# Continuous Deployment (CD)
+
+A separate GitHub Actions workflow handles CD, triggered upon successful merge into the master branch. It logs "Deployed!" upon completion, indicating successful deployment.
+
+# Running Typescript Application within Dockerfile
 
 + `FROM node:21.2.0 AS build`: Docker provides a clean slate environment, the first step is to define the base image for Node.js. 
 
@@ -76,13 +90,13 @@ This command will build the Docker images and start the containers defined in th
 
 + `CMD ["node", "dist/index.js"]`: Docker container runs the application using `node dist/index.js` command.
 
-## Logging
+# Logging
 
 The logs include timestamp, log level, message, and additional data when applicable.
 
 <img src=terminal.png>
 
-## Metrics Collection
+# Metrics Collection
 
 The application uses the `prom-client` library to expose metrics at the `/metrics` endpoint. Prometheus is configured to scrape these metrics at regular intervals. Grafana is then used for visualizing the collected metrics.
 
@@ -97,14 +111,6 @@ The `prometheus.yml` file contains the configuration for Prometheus to scrape me
 The Grafana program is configured to automatically download the dashboard from a JSON file, the path to which is specified in the dashboard.yml file. Due to Docker Compose volumes, the saved dashboard can be retrieved from the Docker environment. This setup ensures that the same dashboard configuration is available across different environments, making it easy to set up and repeat.
 
 <img src=grafana.png>
-
-## Continuous Integration (CI)
-
-Using GitHub Actions, a CI pipeline has been set up to ensure the integrity of the code. The pipeline automatically triggers on each commit pushed to a pull-request, executing tests and linting processes to maintain code quality standards.
-
-## Continuous Deployment (CD)
-
-Another GitHub Actions workflow has been configured for Continuous Deployment (CD). This workflow is triggered exclusively when a pull-request is successfully merged into the master branch. Its sole purpose is to log "Deployed!" upon completion, signaling the successful deployment of the application.
 
 ## Technology Stack
 
