@@ -69,17 +69,13 @@ app.put('/deals/:id', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/metrics', async (req: Request, res: Response) => {
-  res.setHeader('Content-Type', registry.contentType)
-  res.send(await registry.metrics())
-
 export const server = app.listen(PORT, () => {
   logger.info(`Server is running on http://localhost:${PORT}`);
 });
 
 metricsServer.listen(METRICS_PORT, () => {
   logger.info(`Prometheus Metrics server listening on http://localhost:${METRICS_PORT}`);
-})
+});
 
 
 module.exports = { app, server };
