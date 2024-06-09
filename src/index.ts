@@ -6,7 +6,7 @@ import { registry, httpRequestCounter, httpRequestTimer } from './metrics';
 
 dotenv.config();
 
-const app: Express = express();
+export const app: Express = express();
 const PORT = process.env.PORT || 3000;
 const PIPEDRIVE_API_URL = process.env.PIPEDRIVE_API_URL || 'https://api.pipedrive.com/v1/deals';
 const API_TOKEN = process.env.API_TOKEN;
@@ -83,8 +83,14 @@ app.put('/deals/:id', async (req: Request, res: Response) => {
 app.get('/metrics', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', registry.contentType)
   res.send(await registry.metrics())
-})
 
-app.listen(PORT, () => {
+export const server = app.listen(PORT, () => {
   logger.info(`Server is running on http://localhost:${PORT}`);
 });
+
+metricsServer.listen(METRICS_PORT, () => {
+  logger.info(`Prometheus Metrics server listening on http://localhost:${METRICS_PORT}`);
+})
+
+
+module.exports = { app, server };

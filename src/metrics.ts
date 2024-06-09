@@ -1,4 +1,6 @@
-import { Registry, collectDefaultMetrics, Counter, Histogram } from "prom-client";
+import express, { Express, NextFunction, Request, Response } from "express";
+import { Registry, collectDefaultMetrics, Counter, Histogram, Gauge } from "prom-client";
+import { createServer } from "http";
 
 const registry = new Registry();
 
@@ -22,5 +24,6 @@ const httpRequestTimer = new Histogram({
 
 
 
-export { registry, httpRequestCounter, httpRequestTimer }
-  
+const metricsServer = createServer(app);
+
+export { metricsServer, updateMetrics };
