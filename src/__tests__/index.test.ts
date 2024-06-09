@@ -40,6 +40,7 @@ describe("POST /deals endpoint", () => {
 
     const res:Response = await request(app)
       .post("/deals")
+      .set("Authorization", `Bearer ${api_token}`)
       .send(testData)
       .expect("Content-Type", /json/);
     expect(res.status).toEqual(200);
@@ -109,6 +110,7 @@ describe("PUT /deals endpoint", () => {
 
     const res:Response = await request(app)
       .put("/deals/1")
+      .set("Authorization", `Bearer ${api_token}`)
       .send(testData)
       .expect("Content-Type", /json/);
     expect(res.status).toEqual(200);
