@@ -1,14 +1,14 @@
-import request from 'supertest';
+import request, { Response } from 'supertest';
 import { app, server } from '../index';
 import { metricsServer } from '../metrics';
 import axios from 'axios';
 
 describe("GET /deals endpoint", () => {
   it("should return success", async () => {
-    await request(app)
+    const res:Response = await request(app)
       .get("/deals")
-      .expect("Content-Type", /json/)
-      .expect(200);
+      .expect("Content-Type", /json/);
+    expect(res.status).toEqual(200);
   });
 
   it("should handle server errors", async () => {
@@ -36,11 +36,11 @@ describe("POST /deals endpoint", () => {
       currency: "USD",
     };
 
-    await request(app)
+    const res:Response = await request(app)
       .post("/deals")
       .send(testData)
-      .expect("Content-Type", /json/)
-      .expect(200);
+      .expect("Content-Type", /json/);
+    expect(res.status).toEqual(200);
   });
 
   it("should handle validation errors", async () => {
@@ -105,11 +105,11 @@ describe("PUT /deals endpoint", () => {
       currency: "USD",
     };
 
-    await request(app)
+    const res:Response = await request(app)
       .put("/deals/1")
       .send(testData)
-      .expect("Content-Type", /json/)
-      .expect(200);
+      .expect("Content-Type", /json/);
+    expect(res.status).toEqual(200);
   });
 
   it("should handle errors from external API", async () => {
