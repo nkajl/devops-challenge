@@ -100,6 +100,8 @@ The logs include timestamp, log level, message, and additional data when applica
 
 The application uses the `prom-client` library to expose metrics at the `/metrics` endpoint. Prometheus is configured to scrape these metrics at regular intervals. Grafana is then used for visualizing the collected metrics.
 
+<img src=pd-task.jpg>
+
 ## Prometheus Configuration
 
 The `prometheus.yml` file contains the configuration for Prometheus to scrape metrics from a specified port where the /metrics endpoint is located.
