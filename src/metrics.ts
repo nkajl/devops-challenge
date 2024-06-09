@@ -1,5 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import { Registry, collectDefaultMetrics, Counter, Histogram, Gauge } from "prom-client";
+import { createServer } from "http";
 
 const registry = new Registry();
 
@@ -19,7 +20,6 @@ const httpRequestCounter = new Counter({
     registers: [registry],
     labelNames: httpMetricsLabelNames,
   });
-
 
 const httpRequestTimerBuckets = new Histogram({
     name: 'http_total_requests_duration_ms',
@@ -48,13 +48,11 @@ const updateMetrics = (req: Request, res: Response, next: NextFunction) => {
     next();
 };
 
-
-
 app.get('/metrics', async (_, res: Response) => {
   res.setHeader('Content-Type', registry.contentType)
   res.send(await registry.metrics())
 });
 
+const metricsServer = createServer(app);
 
-export { app as metricsServer, updateMetrics };
-  
+export { metricsServer, updateMetrics };

@@ -6,7 +6,7 @@ import { metricsServer, updateMetrics } from './metrics';
 
 dotenv.config();
 
-const app: Express = express();
+export const app: Express = express();
 const PORT = process.env.PORT || 3000;
 const METRICS_PORT = process.env.METRICS_PORT || 8080;
 const PIPEDRIVE_API_URL = process.env.PIPEDRIVE_API_URL || 'https://api.pipedrive.com/v1/deals';
@@ -69,10 +69,13 @@ app.put('/deals/:id', async (req: Request, res: Response) => {
   }
 });
 
-metricsServer.listen(METRICS_PORT, () => {
-  logger.info(`Prometheus Metrics server listening on http://localhost:${METRICS_PORT}`);
-})
-
-app.listen(PORT, () => {
+export const server = app.listen(PORT, () => {
   logger.info(`Server is running on http://localhost:${PORT}`);
 });
+
+metricsServer.listen(METRICS_PORT, () => {
+  logger.info(`Prometheus Metrics server listening on http://localhost:${METRICS_PORT}`);
+});
+
+
+module.exports = { app, server };
