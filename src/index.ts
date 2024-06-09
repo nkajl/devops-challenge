@@ -2,24 +2,19 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import axios from "axios";
 import logger from "./logger";
-import { registry, httpRequestCounter, httpRequestTimer } from './metrics';
+import { metricsServer, updateMetrics } from './metrics';
 
 dotenv.config();
 
 export const app: Express = express();
 const PORT = process.env.PORT || 3000;
+const METRICS_PORT = process.env.METRICS_PORT || 8080;
 const PIPEDRIVE_API_URL = process.env.PIPEDRIVE_API_URL || 'https://api.pipedrive.com/v1/deals';
 const API_TOKEN = process.env.API_TOKEN;
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-  const end = httpRequestTimer.startTimer();
-  res.on('finish', () => {
-    end({ method: req.method, path: req.path, status: res.statusCode });
-  });
-  next();
-});
+app.use(updateMetrics);
 
 app.get('/deals', async (req: Request, res: Response) => {
   try {
@@ -35,8 +30,6 @@ app.get('/deals', async (req: Request, res: Response) => {
       logger.error('Error in GET /deals', { error: error });
     }
     res.status(500).json({ error: (error as Error).message });
-  } finally {
-    httpRequestCounter.labels(req.method, req.path, res.statusCode.toString()).inc()
   }
 });
 
@@ -55,8 +48,6 @@ app.post('/deals', async (req: Request, res: Response) => {
       logger.error('Error in POST /deals', { error: error });
     }
     res.status(500).json({ error: (error as Error).message });
-  } finally {
-    httpRequestCounter.labels(req.method, req.path, res.statusCode.toString()).inc()
   }
 });
 
@@ -75,8 +66,6 @@ app.put('/deals/:id', async (req: Request, res: Response) => {
       logger.error('Error in PUT /deals', { error: error });
     }
     res.status(500).json({ error: (error as Error).message });
-  } finally {
-    httpRequestCounter.labels(req.method, req.path, res.statusCode.toString()).inc()
   }
 });
 
