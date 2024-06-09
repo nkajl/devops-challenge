@@ -2,11 +2,13 @@ import request, { Response } from 'supertest';
 import { app, server } from '../index';
 import { metricsServer } from '../metrics';
 import axios from 'axios';
+const api_token = process.env.API_TOKEN
 
 describe("GET /deals endpoint", () => {
   it("should return success", async () => {
     const res:Response = await request(app)
       .get("/deals")
+      .set("Authorization", `Bearer ${api_token}`)
       .expect("Content-Type", /json/);
     expect(res.status).toEqual(200);
   });
